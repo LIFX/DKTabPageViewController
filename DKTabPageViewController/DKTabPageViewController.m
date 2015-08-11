@@ -38,6 +38,14 @@ CGSize dktabpage_getTextSize(UIFont *font,NSString *text, CGFloat maxWidth){
 
 @implementation DKTabPageItem
 
+- (instancetype)init {
+    self = [super init];
+    if (self) {
+        self.enabled = YES;
+    }
+    return self;
+}
+
 @end
 
 @implementation DKTabPageViewControllerItem
@@ -86,6 +94,7 @@ CGSize dktabpage_getTextSize(UIFont *font,NSString *text, CGFloat maxWidth){
         [[DKTabPageBar appearance] setSelectedTitleColor:DKTABPAGE_RGB_COLOR(231, 53, 53)];
         [[DKTabPageBar appearance] setSelectedIndicatorColor:DKTABPAGE_RGB_COLOR(255, 99, 99)];
         [[DKTabPageBar appearance] setSelectedIndicatorHeight:3.0];
+        [[DKTabPageBar appearance] setDisabledTitleColor:[DKTABPAGE_RGB_COLOR(0, 0, 0) colorWithAlphaComponent:0.4]];
         [[DKTabPageBar appearance] setShadowColor:DKTABPAGE_RGB_COLOR(208, 208, 208)];
         [[DKTabPageBar appearance] setBackgroundColor:[UIColor whiteColor]];
     }
@@ -147,13 +156,14 @@ CGSize dktabpage_getTextSize(UIFont *font,NSString *text, CGFloat maxWidth){
                 DKTabPageViewControllerItem *vcItem = (DKTabPageViewControllerItem *)item;
                 
                 UIButton *itemButton = [UIButton buttonWithType:UIButtonTypeCustom];
+                itemButton.enabled = item.isEnabled;
+                itemButton.selected = self.selectedIndex == i;
                 [self setupButtonStyleForButton:itemButton];
                 itemButton.tag = i;
                 [itemButton setTitle:vcItem.title forState:UIControlStateNormal];
                 [itemButton addTarget:self action:@selector(onButtonClicked:) forControlEvents:UIControlEventTouchUpInside];
                 vcItem.button = itemButton;
-                itemButton.selected = self.selectedIndex == i;
-                
+
                 button = itemButton;
                 
                 CGFloat titleWidth = dktabpage_getTextSize(self.titleFont, vcItem.title, CGFLOAT_MAX).width + 5;
@@ -162,6 +172,7 @@ CGSize dktabpage_getTextSize(UIFont *font,NSString *text, CGFloat maxWidth){
                 }
             } else if ([item isKindOfClass:[DKTabPageButtonItem class]]) {
                 DKTabPageButtonItem *buttonItem = (DKTabPageButtonItem *)item;
+                buttonItem.button.enabled = buttonItem.isEnabled;
                 [self setupButtonStyleForButton:buttonItem.button];
                 
                 button = buttonItem.button;
@@ -224,6 +235,7 @@ CGSize dktabpage_getTextSize(UIFont *font,NSString *text, CGFloat maxWidth){
     [button setTitleColor:self.titleColor forState:UIControlStateNormal];
     [button setTitleColor:self.selectedTitleColor forState:UIControlStateHighlighted];
     [button setTitleColor:self.selectedTitleColor forState:UIControlStateSelected];
+    [button setTitleColor:self.disabledTitleColor forState:UIControlStateDisabled];
     [button setBackgroundColor:[UIColor clearColor]];
     button.titleLabel.font = self.titleFont;
 }

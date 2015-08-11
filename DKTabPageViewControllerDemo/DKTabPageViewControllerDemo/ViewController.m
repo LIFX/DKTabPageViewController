@@ -28,6 +28,7 @@
         
         DKTabPageItem *item = [DKTabPageViewControllerItem tabPageItemWithTitle:[NSString stringWithFormat:@"Tab %d" ,i]
                                                                  viewController:vc];
+        item.enabled = i != 3;
         [items addObject:item];
     }
     
