@@ -14,6 +14,7 @@
 @interface DKTabPageItem : NSObject
 
 @property (nonatomic, readonly) UIButton *button;
+@property (nonatomic, getter=isEnabled) BOOL enabled;
 
 @end
 
@@ -62,6 +63,8 @@
 @property (nonatomic, strong) UIFont *titleFont UI_APPEARANCE_SELECTOR;
 
 @property (nonatomic, copy) UIColor *titleColor UI_APPEARANCE_SELECTOR;
+
+@property (nonatomic, copy) UIColor *disabledTitleColor UI_APPEARANCE_SELECTOR;
 
 @property (nonatomic, copy) UIColor *selectedTitleColor UI_APPEARANCE_SELECTOR;
 
