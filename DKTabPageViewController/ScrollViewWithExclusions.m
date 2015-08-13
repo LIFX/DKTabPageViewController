@@ -10,10 +10,12 @@
 {
     BOOL shouldExclude = NO;
     for (UIView *exclusionView in self.exclusionViews) {
-        CGPoint localPoint = [self convertPoint:point toView:exclusionView];
-        if (CGRectContainsPoint(exclusionView.bounds, localPoint)) {
-            shouldExclude = YES;
-            break;
+        if (!exclusionView.hidden) {
+            CGPoint localPoint = [self convertPoint:point toView:exclusionView];
+            if (CGRectContainsPoint(exclusionView.bounds, localPoint)) {
+                shouldExclude = YES;
+                break;
+            }
         }
     }
     self.scrollEnabled = !shouldExclude;
