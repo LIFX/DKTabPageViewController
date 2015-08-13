@@ -7,6 +7,7 @@
 //
 
 #import "DKTabPageViewController.h"
+#import "ScrollViewWithExclusions.h"
 
 #define DKTABPAGE_RGB_COLOR(r,g,b)                [UIColor colorWithRed:(r)/255.0f green:(g)/255.0f blue:(b)/255.0f alpha:1]
 #define DKTABPAGE_IOS_VERSION_GREATER_THAN_7      ([[[UIDevice currentDevice] systemVersion] intValue] >= 7)
@@ -313,7 +314,7 @@ CGSize dktabpage_getTextSize(UIFont *font,NSString *text, CGFloat maxWidth){
 
 ////////////////////////////////////////////////////////////////////////////////
 
-@interface DKTabPageScrollView : UIScrollView {
+@interface DKTabPageScrollView : ScrollViewWithExclusions {
     BOOL contentViewIsAlready;
 }
 
@@ -382,7 +383,7 @@ CGSize dktabpage_getTextSize(UIFont *font,NSString *text, CGFloat maxWidth){
 @interface DKTabPageViewController () <UIScrollViewDelegate>
 
 @property (nonatomic, copy, readwrite) NSArray *items;
-@property (nonatomic, strong) UIScrollView *mainScrollView;
+@property (nonatomic, strong) ScrollViewWithExclusions *mainScrollView;
 @property (nonatomic, strong) DKTabPageBar *tabPageBar;
 @property (nonatomic, assign) UIEdgeInsets scrollViewContentInsets;
 @property (nonatomic, strong) NSLayoutConstraint *mainScrollViewConstraintY;
@@ -544,7 +545,7 @@ CGSize dktabpage_getTextSize(UIFont *font,NSString *text, CGFloat maxWidth){
 - (UIScrollView *)mainScrollView {
     if (_mainScrollView == nil) {
         if (DKTABPAGE_IOS_VERSION_GREATER_THAN_7) {
-            _mainScrollView = [[UIScrollView alloc] init];
+            _mainScrollView = [[ScrollViewWithExclusions alloc] init];
         } else {
             _mainScrollView = [[DKTabPageScrollView alloc] init];
         }
@@ -674,6 +675,11 @@ CGSize dktabpage_getTextSize(UIFont *font,NSString *text, CGFloat maxWidth){
             [self.mainScrollView addSubview:selectedItem.contentViewController.view];
             [self addConstraintsToView:selectedItem.contentViewController.view forIndex:_selectedIndex];
         }
+        
+        if ([selectedItem.contentViewController respondsToSelector:@selector(exclusionViews)]) {
+            self.mainScrollView.exclusionViews = [selectedItem.contentViewController performSelector:@selector(exclusionViews) withObject:nil];
+        }
+        
         [self cleanupSubviews];
     }
     
