@@ -419,19 +419,30 @@ CGSize dktabpage_getTextSize(UIFont *font,NSString *text, CGFloat maxWidth){
 
 - (void)viewDidLayoutSubviews {
     [super viewDidLayoutSubviews];
-    
+
     if (!self.mainScrollView.isTracking && !self.mainScrollView.dragging) {
         self.mainScrollView.contentSize = CGSizeMake(CGRectGetWidth(self.mainScrollView.bounds) * self.childViewControllers.count, 0);
         self.mainScrollView.contentOffset = CGPointMake(CGRectGetWidth(self.mainScrollView.bounds) * self.selectedIndex, 0);
-        
+
         /**
          *  Fixed bugs for content size incorrect when called _resizeWithOldSuperviewSize on iOS 7
          */
         if (!DKTABPAGE_IOS_VERSION_GREATER_THAN_8) {
             [self cleanupSubviews];
         }
-        
+
         if (self.selectedViewController) {
+            // NOTE: LIFX specific, unfortunate workaround for the LFXInertialPickers; don't attempt to update constraints whilst they're in motion/tracking
+            if ([self.selectedViewController respondsToSelector:@selector(exclusionViews)]) {
+                NSArray *exclusions = [self.selectedViewController performSelector:@selector(exclusionViews) withObject:nil];
+
+                for (UIControl *exclusionControl in exclusions) {
+                    if ([exclusionControl isKindOfClass:[UIControl class]]) {
+                        if (exclusionControl.tracking) return;
+                    }
+                }
+            }
+
             [self.mainScrollView removeConstraints:self.mainScrollView.constraints];
             [self addConstraintsToView:self.selectedViewController.view forIndex:self.selectedIndex];
         }
