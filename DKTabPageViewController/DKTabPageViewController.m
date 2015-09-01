@@ -639,24 +639,11 @@ CGSize dktabpage_getTextSize(UIFont *font,NSString *text, CGFloat maxWidth){
 }
 
 - (void)setupContentInsetsForView:(UIView *)view {
-    if ([view isKindOfClass:[UIScrollView class]]) {
-        UIScrollView *scrollView = (UIScrollView *)view;
-        
-        if (!(scrollView.contentInset.top >= self.scrollViewContentInsets.top &&
-              scrollView.contentInset.bottom <= self.scrollViewContentInsets.bottom)) {
-            
-            scrollView.contentInset = self.scrollViewContentInsets;
-            scrollView.scrollIndicatorInsets = self.scrollViewContentInsets;
-            
-            scrollView.contentOffset = CGPointMake(0, -scrollView.contentInset.top);
-        }
-    } else {
-        if (self.showTabPageBar) {
-            self.mainScrollViewConstraintY.constant = self.tabPageBar.tabBarHeight;
-        } else {
-            self.mainScrollViewConstraintY.constant = 0;
-        }
-    }
+	if (self.showTabPageBar) {
+		self.mainScrollViewConstraintY.constant = self.tabPageBar.tabBarHeight;
+	} else {
+		self.mainScrollViewConstraintY.constant = 0;
+	}
 }
 
 - (void)cleanupSubviews {
